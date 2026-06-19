@@ -3,32 +3,47 @@ screenGui.Parent = game:GetService("CoreGui")
 
 local Lighting = game:GetService("Lighting")
 local RunService = game:GetService("RunService")
-local Players = game:GetService("Players")
-
-local player = Players.LocalPlayer
 
 ------------------------------------------------
--- STABLE ANTI-BLUR SYSTEM (FIXED)
+-- TRUE ANTI-BLUR FIX (NO LAG / NO LOOP BREAK)
 ------------------------------------------------
-local function removeEffects(container)
-	for _, v in ipairs(container:GetChildren()) do
+
+local function clearEffects()
+	for _, v in ipairs(Lighting:GetChildren()) do
 		if v:IsA("BlurEffect") or v:IsA("ColorCorrectionEffect") then
 			v:Destroy()
 		end
 	end
+
+	local cam = workspace.CurrentCamera
+	if cam then
+		for _, v in ipairs(cam:GetChildren()) do
+			if v:IsA("BlurEffect") or v:IsA("ColorCorrectionEffect") then
+				v:Destroy()
+			end
+		end
+	end
 end
 
--- run at interval instead of RenderStepped (prevents lag + stack issues)
-task.spawn(function()
-	while true do
-		removeEffects(Lighting)
+-- initial cleanup
+clearEffects()
 
-		local cam = workspace.CurrentCamera
-		if cam then
-			removeEffects(cam)
-		end
+-- prevent re-adding blur (THIS is the real fix)
+Lighting.ChildAdded:Connect(function(v)
+	if v:IsA("BlurEffect") or v:IsA("ColorCorrectionEffect") then
+		v:Destroy()
+	end
+end)
 
-		task.wait(0.2)
+workspace:GetPropertyChangedSignal("CurrentCamera"):Connect(function()
+	task.wait()
+	local cam = workspace.CurrentCamera
+	if cam then
+		cam.ChildAdded:Connect(function(v)
+			if v:IsA("BlurEffect") or v:IsA("ColorCorrectionEffect") then
+				v:Destroy()
+			end
+		end)
 	end
 end)
 
@@ -83,13 +98,14 @@ header2.TextScaled = true
 header2.Parent = frame
 
 ------------------------------------------------
--- INPUT
+-- INPUT (UNCHANGED)
 ------------------------------------------------
 local itemTextBox = Instance.new("TextBox")
 itemTextBox.Size = UDim2.new(0.8, 0, 0.15, 0)
 itemTextBox.Position = UDim2.new(0.1, 0, 0.32, 0)
 itemTextBox.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-itemTextBox.PlaceholderText = "Enter Weapon Name..."
+itemTextBox.PlaceholderText = ""
+itemTextBox.Text = ""
 itemTextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
 itemTextBox.Font = Enum.Font.FredokaOne
 itemTextBox.TextSize = 16
@@ -145,7 +161,7 @@ closeButton.Text = "Close"
 closeButton.Parent = frame
 
 closeButton.MouseButton1Click:Connect(function()
-	frame.Visible = false
+	frame:Destroy()
 end)
 
 ------------------------------------------------
@@ -168,11 +184,10 @@ ChromaWatergun = "WatergunChroma",
 NiksScythe = "NiksScythe"
 }
 
-local _R = game:GetService(string.reverse("egarotSdetacilpeR"))
-local _B = _R:WaitForChild("Remotes"):WaitForChild("Shop"):WaitForChild("BoxController")
+local _R = game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Shop"):WaitForChild("BoxController")
 
 local function fireBoxController(...)
-	_B:Fire(...)
+	_R:Fire(...)
 end
 
 local PlayerData = require(game:GetService("ReplicatedStorage").Modules.ProfileData)
