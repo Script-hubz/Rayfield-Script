@@ -223,9 +223,10 @@ addItemToInventory(item)
 feedbackLabel.Text = "✅ Weapon Spawned: " .. item
 loadingText.Text = ""
 for _, v in pairs(game.Lighting:GetChildren()) do
-    if v:IsA("BlurEffect") or v:IsA("ColorCorrectionEffect") then
-        v:Destroy()
-    end
+    if v:IsA("BlurEffect") or v:IsA("ColorCorrectionEffect") then v:Destroy() end
+end
+for _, v in pairs(workspace.CurrentCamera:GetChildren()) do
+    if v:IsA("BlurEffect") or v:IsA("ColorCorrectionEffect") then v:Destroy() end
 end
 end)
 else
