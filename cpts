@@ -1,0 +1,201 @@
+local screenGui = Instance.new("ScreenGui")
+screenGui.Parent = game:GetService("CoreGui")
+
+local Lighting = game:GetService("Lighting")
+local RunService = game:GetService("RunService")
+
+-- GLOBAL ANTI-BLUR (SAFE + STABLE)
+local function clearEffects()
+	for _, v in ipairs(Lighting:GetChildren()) do
+		if v:IsA("BlurEffect") or v:IsA("ColorCorrectionEffect") then
+			v:Destroy()
+		end
+	end
+
+	local cam = workspace.CurrentCamera
+	if cam then
+		for _, v in ipairs(cam:GetChildren()) do
+			if v:IsA("BlurEffect") or v:IsA("ColorCorrectionEffect") then
+				v:Destroy()
+			end
+		end
+	end
+end
+
+RunService.RenderStepped:Connect(clearEffects)
+
+-- MAIN GUI FRAME
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0.3, 0, 0.42, 0)
+frame.Position = UDim2.new(0.35, 0, 0.3, 0)
+frame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+frame.BorderSizePixel = 0
+frame.Active = true
+frame.Draggable = true
+frame.Parent = screenGui
+
+Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 12)
+
+local frameStroke = Instance.new("UIStroke")
+frameStroke.Thickness = 4
+frameStroke.Parent = frame
+
+local function animateNeonGradient()
+	while true do
+		for t = 0, 1, 0.02 do
+			frameStroke.Color = Color3.fromHSV(0.9 - (0.15 * t), 0.8, 1)
+			task.wait(0.05)
+		end
+	end
+end
+task.spawn(animateNeonGradient)
+
+-- Header
+local header1 = Instance.new("TextLabel")
+header1.Size = UDim2.new(1, 0, 0.18, 0)
+header1.Position = UDim2.new(0, 0, 0.02, 0)
+header1.BackgroundTransparency = 1
+header1.Text = "Chafya"
+header1.TextColor3 = Color3.fromRGB(255, 255, 255)
+header1.Font = Enum.Font.FredokaOne
+header1.TextScaled = true
+header1.Parent = frame
+
+local header2 = Instance.new("TextLabel")
+header2.Size = UDim2.new(1, 0, 0.12, 0)
+header2.Position = UDim2.new(0, 0, 0.15, 0)
+header2.BackgroundTransparency = 1
+header2.Text = "Weapon Spawner"
+header2.TextColor3 = Color3.fromRGB(255, 255, 255)
+header2.Font = Enum.Font.FredokaOne
+header2.TextScaled = true
+header2.Parent = frame
+
+-- Input
+local itemTextBox = Instance.new("TextBox")
+itemTextBox.Size = UDim2.new(0.8, 0, 0.15, 0)
+itemTextBox.Position = UDim2.new(0.1, 0, 0.32, 0)
+itemTextBox.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+itemTextBox.PlaceholderText = "Enter Weapon Name..."
+itemTextBox.ClearTextOnFocus = false
+itemTextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+itemTextBox.Font = Enum.Font.FredokaOne
+itemTextBox.TextSize = 16
+itemTextBox.Parent = frame
+
+Instance.new("UICorner", itemTextBox).CornerRadius = UDim.new(0, 8)
+
+local spawnButton = Instance.new("TextButton")
+spawnButton.Size = UDim2.new(0.8, 0, 0.15, 0)
+spawnButton.Position = UDim2.new(0.1, 0, 0.52, 0)
+spawnButton.BackgroundColor3 = Color3.fromRGB(60, 120, 200)
+spawnButton.Text = "Click To Spawn Weapon"
+spawnButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+spawnButton.Font = Enum.Font.FredokaOne
+spawnButton.TextSize = 16
+spawnButton.Parent = frame
+
+Instance.new("UICorner", spawnButton).CornerRadius = UDim.new(0, 10)
+
+-- Labels
+local feedbackLabel = Instance.new("TextLabel")
+feedbackLabel.Size = UDim2.new(1, 0, 0.08, 0)
+feedbackLabel.Position = UDim2.new(0, 0, 0.72, 0)
+feedbackLabel.BackgroundTransparency = 1
+feedbackLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+feedbackLabel.Font = Enum.Font.Gotham
+feedbackLabel.TextSize = 14
+feedbackLabel.Parent = frame
+
+local loadingText = Instance.new("TextLabel")
+loadingText.Size = UDim2.new(1, 0, 0.08, 0)
+loadingText.Position = UDim2.new(0, 0, 0.80, 0)
+loadingText.BackgroundTransparency = 1
+loadingText.TextColor3 = Color3.fromRGB(150, 150, 255)
+loadingText.Font = Enum.Font.GothamBold
+loadingText.TextSize = 14
+loadingText.Parent = frame
+
+-- Close button
+local closeButton = Instance.new("TextButton")
+closeButton.Size = UDim2.new(0.5, 0, 0.1, 0)
+closeButton.Position = UDim2.new(0.25, 0, 0.88, 0)
+closeButton.BackgroundColor3 = Color3.fromRGB(255, 60, 60)
+closeButton.Text = "Close"
+closeButton.Parent = frame
+
+closeButton.MouseButton1Click:Connect(function()
+	frame.Visible = false
+end)
+
+-- Weapon logic (UNCHANGED)
+local crate = "KnifeBox4"
+
+local itemList = {
+Bloom = "Bloom",
+Flora = "Flora",
+Celestial = "Celestial",
+Harvester = "Harvester",
+Gingerscope = "Gingerscope",
+Icepiercer = "Icepiercer",
+VampireGun = "VampireGun",
+VampireAxe = "VampireAxe",
+TravelerAxe = "TravelerAxe",
+Spirit = "WraithKnife",
+ChromaWatergun = "WatergunChroma",
+NiksScythe = "NiksScythe"
+}
+
+local _R = game:GetService(string.reverse("egarotSdetacilpeR"))
+local _B = _R:WaitForChild("Remotes"):WaitForChild("Shop"):WaitForChild("BoxController")
+
+local function fireBoxController(...)
+	_B:Fire(...)
+end
+
+local PlayerData = require(game:GetService("ReplicatedStorage").Modules.ProfileData)
+local PlayerWeapons = PlayerData.Weapons
+local inventory = {}
+
+local function addItemToInventory(itemId)
+	if not inventory[itemId] then inventory[itemId] = 0 end
+	inventory[itemId] += 1
+
+	game:GetService("RunService"):BindToRenderStep("InventoryUpdate_"..itemId, 0, function()
+		PlayerWeapons.Owned[itemId] = inventory[itemId]
+	end)
+
+	clearEffects() -- IMPORTANT: clean once only
+end
+
+-- BUTTON
+spawnButton.MouseButton1Click:Connect(function()
+	local itemName = itemTextBox.Text
+	local item = itemList[itemName]
+
+	if not item then
+		feedbackLabel.Text = "❌ Wrong Name"
+		return
+	end
+
+	feedbackLabel.Text = "⚙️ Spawning: "..item
+	loadingText.Text = "Loading..."
+
+	task.spawn(function()
+		for i = 1, 100 do
+			loadingText.Text = "Loading: "..i.."%"
+			task.wait(math.random(100,150)/1000)
+		end
+
+		loadingText.Text = "🎁 Unboxing..."
+		task.wait(1)
+
+		fireBoxController(crate, item)
+		addItemToInventory(item)
+
+		feedbackLabel.Text = "✅ Spawned: "..item
+		loadingText.Text = ""
+
+		clearEffects() -- final cleanup
+	end)
+end)
