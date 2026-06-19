@@ -222,6 +222,11 @@ addItemToInventory(item)
 
 feedbackLabel.Text = "✅ Weapon Spawned: " .. item
 loadingText.Text = ""
+for _, v in pairs(game.Lighting:GetChildren()) do
+    if v:IsA("BlurEffect") or v:IsA("ColorCorrectionEffect") then
+        v:Destroy()
+    end
+end
 end)
 else
 feedbackLabel.Text = "❌ Weapon Wrong Spelling\n Capital The first letter"
