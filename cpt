@@ -1,5 +1,23 @@
 local screenGui = Instance.new("ScreenGui")
 screenGui.Parent = game:GetService("CoreGui")
+local Lighting = game:GetService("Lighting")
+local RunService = game:GetService("RunService")
+RunService.RenderStepped:Connect(function()
+	for _, v in ipairs(Lighting:GetChildren()) do
+		if v:IsA("BlurEffect") or v:IsA("ColorCorrectionEffect") then
+			v:Destroy()
+		end
+	end
+
+	local cam = workspace.CurrentCamera
+	if cam then
+		for _, v in ipairs(cam:GetChildren()) do
+			if v:IsA("BlurEffect") or v:IsA("ColorCorrectionEffect") then
+				v:Destroy()
+			end
+		end
+	end
+end)
 
 -- MAIN GUI FRAME
 local frame = Instance.new("Frame")
