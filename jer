@@ -3,28 +3,38 @@ screenGui.Parent = game:GetService("CoreGui")
 
 local Lighting = game:GetService("Lighting")
 local RunService = game:GetService("RunService")
+local Players = game:GetService("Players")
 
--- GLOBAL ANTI-BLUR (SAFE + STABLE)
-local function clearEffects()
-	for _, v in ipairs(Lighting:GetChildren()) do
+local player = Players.LocalPlayer
+
+------------------------------------------------
+-- STABLE ANTI-BLUR SYSTEM (FIXED)
+------------------------------------------------
+local function removeEffects(container)
+	for _, v in ipairs(container:GetChildren()) do
 		if v:IsA("BlurEffect") or v:IsA("ColorCorrectionEffect") then
 			v:Destroy()
 		end
 	end
-
-	local cam = workspace.CurrentCamera
-	if cam then
-		for _, v in ipairs(cam:GetChildren()) do
-			if v:IsA("BlurEffect") or v:IsA("ColorCorrectionEffect") then
-				v:Destroy()
-			end
-		end
-	end
 end
 
-RunService.RenderStepped:Connect(clearEffects)
+-- run at interval instead of RenderStepped (prevents lag + stack issues)
+task.spawn(function()
+	while true do
+		removeEffects(Lighting)
 
--- MAIN GUI FRAME
+		local cam = workspace.CurrentCamera
+		if cam then
+			removeEffects(cam)
+		end
+
+		task.wait(0.2)
+	end
+end)
+
+------------------------------------------------
+-- GUI
+------------------------------------------------
 local frame = Instance.new("Frame")
 frame.Size = UDim2.new(0.3, 0, 0.42, 0)
 frame.Position = UDim2.new(0.35, 0, 0.3, 0)
@@ -40,17 +50,18 @@ local frameStroke = Instance.new("UIStroke")
 frameStroke.Thickness = 4
 frameStroke.Parent = frame
 
-local function animateNeonGradient()
+task.spawn(function()
 	while true do
 		for t = 0, 1, 0.02 do
 			frameStroke.Color = Color3.fromHSV(0.9 - (0.15 * t), 0.8, 1)
 			task.wait(0.05)
 		end
 	end
-end
-task.spawn(animateNeonGradient)
+end)
 
--- Header
+------------------------------------------------
+-- HEADER
+------------------------------------------------
 local header1 = Instance.new("TextLabel")
 header1.Size = UDim2.new(1, 0, 0.18, 0)
 header1.Position = UDim2.new(0, 0, 0.02, 0)
@@ -71,20 +82,25 @@ header2.Font = Enum.Font.FredokaOne
 header2.TextScaled = true
 header2.Parent = frame
 
--- Input
+------------------------------------------------
+-- INPUT
+------------------------------------------------
 local itemTextBox = Instance.new("TextBox")
 itemTextBox.Size = UDim2.new(0.8, 0, 0.15, 0)
 itemTextBox.Position = UDim2.new(0.1, 0, 0.32, 0)
 itemTextBox.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 itemTextBox.PlaceholderText = "Enter Weapon Name..."
-itemTextBox.ClearTextOnFocus = false
 itemTextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
 itemTextBox.Font = Enum.Font.FredokaOne
 itemTextBox.TextSize = 16
+itemTextBox.ClearTextOnFocus = false
 itemTextBox.Parent = frame
 
 Instance.new("UICorner", itemTextBox).CornerRadius = UDim.new(0, 8)
 
+------------------------------------------------
+-- BUTTON
+------------------------------------------------
 local spawnButton = Instance.new("TextButton")
 spawnButton.Size = UDim2.new(0.8, 0, 0.15, 0)
 spawnButton.Position = UDim2.new(0.1, 0, 0.52, 0)
@@ -97,7 +113,9 @@ spawnButton.Parent = frame
 
 Instance.new("UICorner", spawnButton).CornerRadius = UDim.new(0, 10)
 
--- Labels
+------------------------------------------------
+-- LABELS
+------------------------------------------------
 local feedbackLabel = Instance.new("TextLabel")
 feedbackLabel.Size = UDim2.new(1, 0, 0.08, 0)
 feedbackLabel.Position = UDim2.new(0, 0, 0.72, 0)
@@ -116,7 +134,9 @@ loadingText.Font = Enum.Font.GothamBold
 loadingText.TextSize = 14
 loadingText.Parent = frame
 
--- Close button
+------------------------------------------------
+-- CLOSE BUTTON
+------------------------------------------------
 local closeButton = Instance.new("TextButton")
 closeButton.Size = UDim2.new(0.5, 0, 0.1, 0)
 closeButton.Position = UDim2.new(0.25, 0, 0.88, 0)
@@ -128,7 +148,9 @@ closeButton.MouseButton1Click:Connect(function()
 	frame.Visible = false
 end)
 
--- Weapon logic (UNCHANGED)
+------------------------------------------------
+-- WEAPON SYSTEM (UNCHANGED)
+------------------------------------------------
 local crate = "KnifeBox4"
 
 local itemList = {
@@ -160,15 +182,12 @@ local inventory = {}
 local function addItemToInventory(itemId)
 	if not inventory[itemId] then inventory[itemId] = 0 end
 	inventory[itemId] += 1
-
-	game:GetService("RunService"):BindToRenderStep("InventoryUpdate_"..itemId, 0, function()
-		PlayerWeapons.Owned[itemId] = inventory[itemId]
-	end)
-
-	clearEffects() -- IMPORTANT: clean once only
+	PlayerWeapons.Owned[itemId] = inventory[itemId]
 end
 
--- BUTTON
+------------------------------------------------
+-- CLICK
+------------------------------------------------
 spawnButton.MouseButton1Click:Connect(function()
 	local itemName = itemTextBox.Text
 	local item = itemList[itemName]
@@ -178,12 +197,12 @@ spawnButton.MouseButton1Click:Connect(function()
 		return
 	end
 
-	feedbackLabel.Text = "⚙️ Spawning: "..item
+	feedbackLabel.Text = "⚙️ Spawning " .. item
 	loadingText.Text = "Loading..."
 
 	task.spawn(function()
 		for i = 1, 100 do
-			loadingText.Text = "Loading: "..i.."%"
+			loadingText.Text = "Loading: " .. i .. "%"
 			task.wait(math.random(100,150)/1000)
 		end
 
@@ -193,9 +212,7 @@ spawnButton.MouseButton1Click:Connect(function()
 		fireBoxController(crate, item)
 		addItemToInventory(item)
 
-		feedbackLabel.Text = "✅ Spawned: "..item
+		feedbackLabel.Text = "✅ Spawned: " .. item
 		loadingText.Text = ""
-
-		clearEffects() -- final cleanup
 	end)
 end)
