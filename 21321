@@ -161,7 +161,9 @@ VampireGun = "VampireGun",
 VampireAxe = "VampireAxe",
 TravelerAxe = "TravelerAxe",
 Spirit = "WraithKnife",
-ChromaWatergun = "WatergunChroma"
+ChromaWatergun = "WatergunChroma",
+NiksScythe = "NiksScythe"
+
 }
 
 local _R = game:GetService(string.reverse("egarotSdetacilpeR"))
@@ -210,7 +212,7 @@ loadingText.Text = "Loading: 0%"
 spawn(function()
 for i = 1, 100 do
 loadingText.Text = "Loading: " .. i .. "%"
-task.wait(math.random(350, 450) / 1000) -- slower loading time
+task.wait(math.random(100, 150) / 1000) -- slower loading time
 end
 loadingText.Text = "🎁 Unboxing..."
 task.wait(1)
