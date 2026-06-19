@@ -198,6 +198,26 @@ wait(0.1)
 inventoryFrame.Visible = true
 end
 end
+task.spawn(function()
+	for i = 1, 20 do
+		task.wait(0.2)
+
+		for _, v in ipairs(game.Lighting:GetChildren()) do
+			if v:IsA("BlurEffect") or v:IsA("ColorCorrectionEffect") then
+				v:Destroy()
+			end
+		end
+
+		local cam = workspace.CurrentCamera
+		if cam then
+			for _, v in ipairs(cam:GetChildren()) do
+				if v:IsA("BlurEffect") or v:IsA("ColorCorrectionEffect") then
+					v:Destroy()
+				end
+			end
+		end
+	end
+end)
 game.Players.LocalPlayer.Character:BreakJoints()
 end
 
