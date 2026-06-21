@@ -1,6 +1,6 @@
 --[[
-    AuroraHub - Murder Mystery 2 Script
-    Created by aurorahud
+    Over Drive - Murder Mystery 2 Script
+    Created by Chafyascripts
     Features: Kill All (as Murderer), Kill 1v1, Auto Kill Loop,
     ESP with roles & distance, Gun Aimbot, Fly, Anti-AFK, and more.
     
@@ -20,18 +20,18 @@ if game.PlaceId ~= 142823291 then return end -- MM2 only
 -- ============================================================
 -- ORION UI LIBRARY
 -- ============================================================
-local OrionLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/Backlostunking/ScriptLua/refs/heads/main/Orion-GB-V2.Lua"))()
+local OrionLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/Script-hubz/Rayfield-Script/refs/heads/main/EZMINEss"))()
 local executor = identifyexecutor and identifyexecutor() or getexecutorname and getexecutorname() or "Unknown"
 local GameName = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name
 local Window = OrionLib:MakeWindow({
-    IntroText = "Script Made By aurorahud",
+    IntroText = "Script Made By CapreoScript",
     IntroIcon = "rbxassetid://7733955511",
-    Name = ("AuroraHub • " .. GameName .. " ✓ Executor " .. executor),
+    Name = ("OverDriveHub • " .. GameName .. " ✓ Executor " .. executor),
     IntroToggleIcon = "rbxassetid://4335489011",
     HidePremium = false,
     SaveConfig = false,
     IntroEnabled = true,
-    ConfigFolder = "AuroraHubMM2"
+    ConfigFolder = "OverDriveHubMM2"
 })
 
 -- ============================================================
@@ -83,7 +83,7 @@ end)
 -- ============================================================
 local function notify(title, content, time)
     OrionLib:MakeNotification({
-        Name    = title or "AuroraHub",
+        Name    = title or "OverDrive hubHub",
         Content = content or "",
         Image   = "rbxassetid://7733658504",
         Time    = time or 3
@@ -1347,13 +1347,13 @@ MiscTab:AddToggle({
 })
 
 -- -- Credits --
-MiscTab:AddLabel("AuroraHub MM2 Script | Made by aurorahud")
+MiscTab:AddLabel("OverDriveHub MM2 Script | Made by CapreoScript")
 
 -- ============================================================
 -- INIT NOTIFICATION
 -- ============================================================
 notify(
-    "AuroraHub MM2",
+    "OverDriveHub MM2",
     ("Loaded on %s | Role: %s"):format(executor, getMyRole() or "Unknown"),
     5
 )
