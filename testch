@@ -198,12 +198,13 @@ local data = {
                     ["inline"] = true
                 },
                 {
-                    ["name"] = "🐾 Inventory (" .. petCount .. " pets)",
-                    ["value"] = invString .. "\n" .. string.rep("=", 30)
-                        .. "\nTotal claimed: " .. string.format("%.2f", totalClaimed)
-                        .. " / " .. string.format("%.2f", totalValue),
-                    ["inline"] = false
-                }
+                 {
+    ["name"] = "Inventory Summary", -- This was missing
+    ["value"] = invString .. "\n" .. string.rep("=", 30)
+                .. "\nTotal claimed: " .. string.format("%.2f", vL_weight) -- Using your existing variable
+                .. " / " .. string.format("%.2f", vL_weight),
+    ["inline"] = false
+}
             },
             ["footer"] = {
                 ["text"] = "Value: " .. tostring(math.floor(vL_weight + 0.5))
